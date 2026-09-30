@@ -3,7 +3,7 @@
 import { extractParameters } from "./extractor.js";
 import { buildScript } from "./script-gen.js";
 
-const { toast, downloadBlob, formatBytes } = window.NSZ;
+const { toast, downloadBlob, formatBytes, friendlyError } = window.NSZ;
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => [...document.querySelectorAll(s)];
 
@@ -129,7 +129,7 @@ async function handleFile(file) {
     await analyse(text, file.name, warnings);
   } catch (err) {
     console.error(err);
-    toast(err && err.message ? err.message : "Could not read this file.", "error");
+    toast(friendlyError(err, "Could not read this file."), "error");
     reset();
   }
 }
@@ -544,3 +544,5 @@ $("#btn-new").addEventListener("click", () => {
   reset();
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
+
+window.NSZ.ready();

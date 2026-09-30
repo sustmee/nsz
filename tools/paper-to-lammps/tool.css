@@ -43,7 +43,7 @@
   margin-bottom: 14px;
 }
 #paste-input:focus { outline: none; border-color: #0ea5e9; }
-.sample-btn { margin-top: 12px; }
+.sample-btn { margin-top: 12px; white-space: normal; text-align: left; max-width: 100%; }
 
 /* ---------- Summary cards ---------- */
 

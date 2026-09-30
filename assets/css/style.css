@@ -296,6 +296,10 @@ p { margin: 0 0 1em; }
 .btn-ghost:hover { background: var(--surface-2); color: var(--text); }
 
 .btn-sm { padding: 7px 12px; font-size: .85rem; border-radius: 10px; }
+@media (max-width: 560px) {
+  /* Long button labels must wrap on phones, or they push the page wider than the screen. */
+  .btn { white-space: normal; text-align: center; }
+}
 .btn-lg { padding: 14px 24px; font-size: 1.02rem; border-radius: 14px; }
 
 /* ---------- Chips / badges ---------- */
@@ -408,6 +412,22 @@ p { margin: 0 0 1em; }
 }
 .site-footer strong { color: var(--text-soft); }
 .site-footer .heart { color: var(--brand-3); }
+
+/* ---------- Notice (warnings inside pages) ---------- */
+
+.notice {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  border-radius: 14px;
+  font-size: .92rem;
+  color: var(--text);
+  background: color-mix(in srgb, var(--warn) 14%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--warn) 45%, transparent);
+}
+.notice svg { width: 20px; height: 20px; color: var(--warn); flex: none; margin-top: 1px; }
 
 /* ---------- Toast ---------- */
 

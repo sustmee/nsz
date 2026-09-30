@@ -3,7 +3,7 @@
   TEMPLATE FOR A NEW TOOL
   1. Copy this folder to tools/<your-tool-id>/  (e.g. tools/image-compressor/)
   2. Change the title, description, breadcrumb, heading and icon below.
-  3. Put your tool's UI inside <section class="container workspace">.
+  3. Put your tool's UI inside <section class="container workspace" data-tool>.
   4. Write the logic in app.js (and styles in tool.css if needed).
   5. Register the tool in assets/js/tools-registry.js so it shows on the home page.
 -->
@@ -52,7 +52,7 @@
       </div>
     </section>
 
-    <section class="container workspace">
+    <section class="container workspace" data-tool>
       <div class="panel card">
         <p>Your tool's interface goes here.</p>
         <button id="demo-btn" class="btn btn-primary" type="button">Try me</button>

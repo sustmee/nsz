@@ -8,3 +8,6 @@ const { toast } = window.NSZ;
 document.getElementById("demo-btn").addEventListener("click", () => {
   toast("It works! Now build your tool here.");
 });
+
+// Tell the page the tool started (otherwise it shows a "browser too old" notice).
+window.NSZ.ready();

@@ -69,7 +69,8 @@ export function prepare(raw) {
     buffer = [];
     if (!para) return;
     const protectedPara = para.replace(ABBREVIATIONS, (m) => m.replace(/\./g, "\u0002"));
-    for (let s of protectedPara.split(/(?<=[.!?])\s+(?=[A-Z0-9(\["])/)) {
+    // (no regex lookbehind: older iPhones can't parse it)
+    for (let s of protectedPara.replace(/([.!?])\s+(?=[A-Z0-9(\["])/g, "$1\u0003").split("\u0003")) {
       s = s.replace(/\u0002/g, ".").trim();
       if (s.length > 2) sentences.push({ text: s, page, section, kind: sectionKind });
     }

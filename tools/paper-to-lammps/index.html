@@ -54,7 +54,7 @@
       </div>
     </section>
 
-    <section class="container workspace">
+    <section class="container workspace" data-tool>
       <ol class="stepper" aria-label="Progress">
         <li class="step active" data-step="1"><span>1</span> Upload paper</li>
         <li class="step" data-step="2"><span>2</span> Extract</li>
@@ -70,7 +70,7 @@
 
         <div data-input-panel="file">
           <label id="dropzone" class="dropzone" for="file-input">
-            <input id="file-input" type="file" accept=".pdf,.docx,.txt,.md,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain" hidden>
+            <input id="file-input" class="dz-input" type="file" accept="application/pdf,.pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.docx,text/plain,.txt" aria-label="Choose the paper (PDF, Word or text)">
             <div class="dz-icon md-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.9A7 7 0 1 1 15.7 8h1.8a4.5 4.5 0 0 1 2.5 8.2"/><path d="M12 12v9M8 16l4-4 4 4"/></svg>
             </div>

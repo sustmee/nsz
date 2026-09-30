@@ -1,6 +1,6 @@
 /* PDF / Word → Markdown — page controller (upload, progress, results, downloads). */
 
-const { toast, downloadBlob, formatBytes } = window.NSZ;
+const { toast, downloadBlob, formatBytes, friendlyError } = window.NSZ;
 
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => [...document.querySelectorAll(sel)];
@@ -141,7 +141,7 @@ async function handleFile(file) {
     showResult(file, kind, result);
   } catch (err) {
     console.error(err);
-    toast(err && err.message ? err.message : "Something went wrong while converting this file.", "error");
+    toast(friendlyError(err, "Something went wrong while converting this file."), "error");
     reset();
   }
 }
@@ -362,3 +362,5 @@ $("#btn-new").addEventListener("click", () => {
   reset();
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
+
+window.NSZ.ready();

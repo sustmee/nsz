@@ -153,7 +153,37 @@
     return (i === 0 ? n : n.toFixed(n < 10 ? 1 : 0)) + " " + units[i];
   }
 
-  window.NSZ = { SITE, ICONS, toast, downloadBlob, formatBytes, setTheme, toggleTheme };
+  /** Turns "browser too old" failures into advice a student can act on. */
+  function friendlyError(err, fallback) {
+    const msg = (err && err.message) || String(err || "");
+    if (/dynamically imported module|importing a module script failed|module script|SyntaxError|Unexpected token|invalid regular expression|Can't find variable|is not defined/i.test(msg + " " + (err && err.name))) {
+      return "Your browser is too old to run this tool. Please update it (iPhone: Settings → General → Software Update) or open the page in the latest Chrome.";
+    }
+    return msg || fallback || "Something went wrong.";
+  }
+
+  /**
+   * Tool pages call NSZ.ready() once their script has started. If it never does
+   * (an old browser that can't load the script), explain it instead of failing silently.
+   */
+  let toolReady = false;
+  function ready() {
+    toolReady = true;
+  }
+  window.addEventListener("load", () => {
+    if (!document.querySelector("[data-tool]")) return;
+    setTimeout(() => {
+      if (toolReady) return;
+      const box = document.createElement("div");
+      box.className = "notice";
+      box.setAttribute("role", "alert");
+      box.innerHTML = ICONS.alert + "<span>This tool couldn't start in your browser. Please update your browser (iPhone: Settings → General → Software Update) or try the latest Chrome, then reload the page.</span>";
+      const host = document.querySelector("[data-tool]");
+      host.prepend(box);
+    }, 1500);
+  });
+
+  window.NSZ = { SITE, ICONS, toast, downloadBlob, formatBytes, setTheme, toggleTheme, friendlyError, ready };
 
   /* ---------- Boot ---------- */
 
