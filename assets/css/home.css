@@ -317,6 +317,27 @@ a.tool-card:hover .tool-card-go svg { transform: translateX(4px); }
 
 .empty { text-align: center; color: var(--text-mute); padding: 30px 0; }
 
+.cat-head {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 14px 0 -4px;
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+.cat-head:first-child { margin-top: 0; }
+.cat-head::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+.cat-head small {
+  order: 2;
+  font-size: .74rem;
+  font-weight: 700;
+  color: var(--text-mute);
+  padding: 2px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+}
+
 @keyframes card-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 
 /* ---------- Features ---------- */

@@ -62,7 +62,21 @@
   function render() {
     const q = (search.value || "").trim().toLowerCase();
     const list = tools.filter((t) => (activeCategory === "All" || t.category === activeCategory) && matches(t, q));
-    let html = list.map(cardHtml).join("");
+    let html;
+    const cats = [...new Set(list.map((t) => t.category || "Other"))];
+    if (!q && activeCategory === "All" && cats.length > 1) {
+      // Group cards under a heading per category.
+      let i = 0;
+      html = cats
+        .map((c) => {
+          const items = list.filter((t) => (t.category || "Other") === c);
+          return `<h3 class="cat-head"><span>${escapeHtml(c)}</span><small>${items.length} tool${items.length === 1 ? "" : "s"}</small></h3>` +
+            items.map((t) => cardHtml(t, i++)).join("");
+        })
+        .join("");
+    } else {
+      html = list.map(cardHtml).join("");
+    }
     if (!q && activeCategory === "All") html += placeholderCard();
     grid.innerHTML = html;
     empty.hidden = list.length > 0 || (!q && activeCategory === "All");

@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MD Paper to LAMMPS Input — NSZ Toolkit</title>
+  <meta name="description" content="Upload a molecular dynamics paper and get its simulation parameters in a table plus a starter LAMMPS input script. Free and private: runs in your browser.">
+  <meta name="theme-color" content="#0ea5e9">
+  <link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+  <script>
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem("nsz-theme"); } catch (e) {}
+      if (!t) t = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.setAttribute("data-theme", t);
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <link rel="stylesheet" href="../doc-to-markdown/tool.css">
+  <link rel="stylesheet" href="tool.css">
+</head>
+<body data-root="../../">
+  <header id="site-header" class="site-header"></header>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href="../../index.html">Home</a>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg>
+          <a href="../../index.html#tools">LAMMPS &amp; MD</a>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg>
+          <span>MD Paper → LAMMPS Input</span>
+        </nav>
+        <div class="tool-title">
+          <span class="tool-icon md-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1.6"/><ellipse cx="12" cy="12" rx="10" ry="4.2"/><ellipse cx="12" cy="12" rx="10" ry="4.2" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4.2" transform="rotate(120 12 12)"/></svg>
+          </span>
+          <h1>MD Paper <span class="gradient-text md-grad">→ LAMMPS Input</span></h1>
+        </div>
+        <p class="lead">
+          Upload a molecular dynamics paper. The tool finds its simulation details — material, potential, time step,
+          ensemble, temperature, strain rate and more — shows the exact sentence each value came from, and writes a
+          commented starter <code>in.lammps</code> script you can edit and run.
+        </p>
+        <div class="hero-chips">
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> Runs in your browser — nothing uploaded</span>
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Every value linked to its source sentence</span>
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/></svg> Ready-to-edit LAMMPS script</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="container workspace">
+      <ol class="stepper" aria-label="Progress">
+        <li class="step active" data-step="1"><span>1</span> Upload paper</li>
+        <li class="step" data-step="2"><span>2</span> Extract</li>
+        <li class="step" data-step="3"><span>3</span> Check &amp; download</li>
+      </ol>
+
+      <!-- Input -->
+      <div id="upload-view" class="panel">
+        <div class="input-tabs" role="tablist">
+          <button class="input-tab active" type="button" role="tab" aria-selected="true" data-input="file">Upload paper</button>
+          <button class="input-tab" type="button" role="tab" aria-selected="false" data-input="paste">Paste text</button>
+        </div>
+
+        <div data-input-panel="file">
+          <label id="dropzone" class="dropzone" for="file-input">
+            <input id="file-input" type="file" accept=".pdf,.docx,.txt,.md,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain" hidden>
+            <div class="dz-icon md-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.9A7 7 0 1 1 15.7 8h1.8a4.5 4.5 0 0 1 2.5 8.2"/><path d="M12 12v9M8 16l4-4 4 4"/></svg>
+            </div>
+            <p class="dz-title">Drop the paper here, or <span class="dz-link">browse</span></p>
+            <p class="dz-sub">PDF (best), Word .docx or plain text</p>
+            <div class="dz-types">
+              <span class="ftype pdf">PDF</span>
+              <span class="ftype docx">DOCX</span>
+              <span class="ftype txt">TXT</span>
+            </div>
+          </label>
+          <button id="btn-sample" class="btn btn-ghost btn-sm sample-btn" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            No paper at hand? Try a sample Methods section
+          </button>
+        </div>
+
+        <div data-input-panel="paste" hidden>
+          <label class="field">
+            <span>Paste the paper's text (the Methods / Simulation details section is enough)</span>
+            <textarea id="paste-input" rows="12" spellcheck="false" placeholder="e.g. All simulations were performed with LAMMPS. The interactions were described by the Tersoff potential. A time step of 1 fs was used…"></textarea>
+          </label>
+          <button id="btn-paste" class="btn btn-primary" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            Extract parameters
+          </button>
+        </div>
+      </div>
+
+      <!-- Progress -->
+      <div id="progress-view" class="panel" hidden>
+        <div class="file-row">
+          <span id="p-type" class="ftype pdf">PDF</span>
+          <div class="file-meta">
+            <strong id="p-name">paper.pdf</strong>
+            <small id="p-size"></small>
+          </div>
+        </div>
+        <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div id="p-bar" class="progress-bar"></div>
+        </div>
+        <p id="p-status" class="p-status">Starting…</p>
+      </div>
+
+      <!-- Result -->
+      <div id="result-view" hidden>
+        <div class="result-head panel">
+          <div class="success-mark md-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          </div>
+          <div class="result-info">
+            <h2 id="r-title">Paper</h2>
+            <p id="r-name" class="r-name"></p>
+            <div id="r-stats" class="r-stats"></div>
+          </div>
+          <div class="result-actions">
+            <button id="btn-script" class="btn btn-primary btn-lg md-btn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+              Download in.lammps
+            </button>
+            <div class="action-row">
+              <button id="btn-zip" class="btn btn-sm" type="button" title="in.lammps + parameters table (CSV & Markdown) + paper text">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"/></svg>
+                All files (.zip)
+              </button>
+              <button id="btn-ai" class="btn btn-sm" type="button" title="Copy a ready-made prompt to paste into ChatGPT, Claude or Gemini">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"/></svg>
+                Copy AI prompt
+              </button>
+              <button id="btn-new" class="btn btn-sm" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+                New paper
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="r-warnings"></div>
+        <div id="summary" class="summary"></div>
+
+        <div class="viewer panel">
+          <div class="tabs" role="tablist">
+            <button class="tab active" role="tab" aria-selected="true" data-tab="params">Parameters</button>
+            <button class="tab" role="tab" aria-selected="false" data-tab="script">LAMMPS script <span id="todo-count" class="count warn" hidden>0</span></button>
+            <button class="tab" role="tab" aria-selected="false" data-tab="numbers">Every number <span id="num-count" class="count">0</span></button>
+            <button class="tab" role="tab" aria-selected="false" data-tab="methods">Methods text</button>
+          </div>
+          <div class="tab-panels">
+            <div class="tab-panel active" data-panel="params">
+              <div class="legend">
+                <span class="badge-status found">Found</span> in the paper
+                <span class="badge-status suggested">Typical</span> suggested value, not stated in the paper
+                <span class="badge-status missing">Missing</span> not found — fill it in if you know it
+                <span class="legend-hint">Edit any value; the script updates instantly. Click <b>Source</b> to see the sentence.</span>
+              </div>
+              <div id="param-groups"></div>
+              <div id="lists" class="lists"></div>
+            </div>
+            <div class="tab-panel" data-panel="script">
+              <div id="todo-box"></div>
+              <div class="code-toolbar">
+                <span class="hint">Generated from the Parameters tab. Every line is tagged <code>[paper]</code>, <code>[typical]</code> or <code>[TODO]</code>.</span>
+                <div>
+                  <button id="btn-copy-script" class="btn btn-sm" type="button">Copy</button>
+                  <button id="btn-script2" class="btn btn-sm" type="button">Download</button>
+                </div>
+              </div>
+              <pre id="script-view" class="code-view"></pre>
+            </div>
+            <div class="tab-panel" data-panel="numbers">
+              <p class="hint">Every sentence of the paper that contains a number with a unit — so nothing is missed.</p>
+              <input id="num-filter" class="filter-input" type="search" placeholder="Filter, e.g. fs, K, GPa, strain…" autocomplete="off">
+              <div id="num-list" class="num-list"></div>
+            </div>
+            <div class="tab-panel" data-panel="methods">
+              <div id="methods-view" class="methods-view"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="tips">
+        <h3>How to use the result</h3>
+        <ul>
+          <li><b>Check every value</b> with the <i>Source</i> button — the tool reads the paper with rules, not with understanding, so it can pick the wrong number.</li>
+          <li><b>Values from other papers</b> (in the Introduction) are down-weighted, but can still appear as alternatives in the drop-down.</li>
+          <li>The script is a <b>starting point</b>: download the potential file, build the structure if the script says so, and fix every <code>[TODO]</code> line.</li>
+          <li>Graphene / h-BN sheets and fcc, bcc, hcp, diamond and zinc-blende crystals are built directly in LAMMPS. Nanotubes, MoS₂, polymers and water need a data file from another tool — the script tells you which one.</li>
+          <li>Want a second opinion? <b>Copy AI prompt</b> gives you a ready-made prompt with the paper's Methods text for ChatGPT, Claude or Gemini.</li>
+        </ul>
+      </aside>
+    </section>
+  </main>
+
+  <footer id="site-footer" class="site-footer"></footer>
+
+  <script src="../../assets/js/site.js"></script>
+  <script src="../../assets/vendor/mammoth.browser.min.js" defer></script>
+  <script src="../../assets/vendor/turndown.js" defer></script>
+  <script src="../../assets/vendor/turndown-plugin-gfm.js" defer></script>
+  <script src="../../assets/vendor/jszip.min.js" defer></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

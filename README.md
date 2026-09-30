@@ -10,6 +10,7 @@ to pay for or maintain. The whole site is static HTML/CSS/JS with **no build ste
 | Tool | What it does |
 | --- | --- |
 | [PDF / Word → Markdown](tools/doc-to-markdown/) | Converts a PDF or `.docx` file into a `.md` file and saves every figure as `fig1.png`, `fig2.png`, … Downloads everything as one ZIP. |
+| [MD Paper → LAMMPS Input](tools/paper-to-lammps/) | Reads a molecular dynamics paper, lists its simulation parameters (each linked to its source sentence) and writes a commented starter LAMMPS input script. |
 
 ### PDF / Word → Markdown: what it handles
 
@@ -35,6 +36,29 @@ to pay for or maintain. The whole site is static HTML/CSS/JS with **no build ste
 - Limits: scanned PDFs have no text layer (no OCR), old binary `.doc` files are not supported
   (save as `.docx` first), and complex PDF layouts can still need a quick manual clean-up.
 
+### MD Paper → LAMMPS Input: what it handles
+
+- **Input:** PDF (best), `.docx`, plain text, or pasted Methods text. A built-in sample shows how it works.
+- **Finds (rule-based, in the browser):** material and elements, crystal structure, lattice constant, orientation,
+  box size, number of atoms, boundary conditions, fixed/thermostat layers, defects, potential and its source/file,
+  cutoff, electrostatics, software, units, time step, minimization, ensembles, thermostat/barostat and damping,
+  temperature(s), pressure, equilibration and production time, output frequency, simulation type, loading direction,
+  strain rate, maximum strain, heating rate, indenter size/speed/depth, Green–Kubo correlation time, PKA energy,
+  plus the properties computed, analysis methods (CNA, DXA, …) and tools (OVITO, VMD, …).
+- **Every value** shows the sentence and page it came from, alternatives found elsewhere in the paper, and a status:
+  *Found*, *Typical* (a usual value suggested by the tool) or *Missing*. Sentences that describe *other* studies
+  (Introduction, citations) are down-weighted.
+- **Script generator:** builds `in.lammps` from the (editable) table. Every line is tagged `[paper]`, `[typical]` or
+  `[TODO]`. It builds graphene / h-BN sheets and fcc, bcc, hcp, diamond, zinc-blende and B2 crystals directly in LAMMPS,
+  and explains how to build nanotubes, MoS₂, polymers and water with VMD, ASE, Atomsk or Packmol. Templates cover
+  tension/compression (stress–strain output), shear, nanoindentation, Green–Kubo and Müller-Plathe thermal
+  conductivity, heating/melting, diffusion (MSD), irradiation cascades and plain production runs.
+  The generated graphene-tension, copper-nanoindentation and SiC Green–Kubo scripts were test-run in LAMMPS (22 Jul 2025).
+- **Downloads:** `in.lammps`, or a ZIP with the script, `parameters.csv`, `parameters.md`, the paper text and a
+  ready-made prompt for a second opinion from an AI chat.
+- Limits: it reads text with rules, so it can pick the wrong number — always check the sources. Values only shown in
+  tables of images, or in equations, may be missed.
+
 ## Project structure
 
 ```
@@ -52,6 +76,11 @@ tools/
   _template/                Copy this to start a new tool
   doc-to-markdown/          PDF / Word → Markdown tool
     index.html  tool.css  app.js  pdf-to-md.js  docx-to-md.js
+  paper-to-lammps/          MD Paper → LAMMPS Input tool (reuses the PDF reader above)
+    index.html  tool.css  app.js
+    data.js                 materials, potentials, masses, keywords
+    extractor.js            text → parameters (no DOM; runs in Node too)
+    script-gen.js           parameters → in.lammps (no DOM; runs in Node too)
 ```
 
 ## Adding a new tool

@@ -26,6 +26,7 @@ const DEFAULTS = {
   vectorFigures: true,
   pageMarkers: false,
   pageSnapshots: false,
+  extractFigures: true, // false = text only (faster; used by other tools)
 };
 
 const CAPTION_RE = /^(fig(?:ure)?\.?|table)\s*~?(\d+|[ivxlc]+)\s*[.:|—–-]/i;
@@ -440,30 +441,43 @@ function detectGutter(items, view) {
   let left = 0;
   let right = 0;
   let span = 0;
-  const leftRows = new Set();
-  const rightRows = new Set();
-  let ly = [Infinity, -Infinity];
-  let ry = [Infinity, -Infinity];
+  const leftRows = new Map(); // y → [x0, x1] extent of the row's text on that side
+  const rightRows = new Map();
+  let minX = Infinity;
+  let maxX = -Infinity;
+  const extend = (map, g) => {
+    const e = map.get(g.y);
+    map.set(g.y, e ? [Math.min(e[0], g.x0), Math.max(e[1], g.x1)] : [g.x0, g.x1]);
+  };
   for (const g of segments) {
+    minX = Math.min(minX, g.x0);
+    maxX = Math.max(maxX, g.x1);
     if (g.x1 <= gx + 1) {
       left += g.chars;
-      leftRows.add(g.y);
-      ly = [Math.min(ly[0], g.y), Math.max(ly[1], g.y)];
+      extend(leftRows, g);
     } else if (g.x0 >= gx - 1) {
       right += g.chars;
-      rightRows.add(g.y);
-      ry = [Math.min(ry[0], g.y), Math.max(ry[1], g.y)];
+      extend(rightRows, g);
     } else span += g.chars;
   }
-  const vOverlap = Math.min(ly[1], ry[1]) - Math.max(ly[0], ry[0]);
-  const textH = Math.max(ly[1], ry[1]) - Math.min(ly[0], ry[0]);
+  // Real columns: rows of text sit side by side on both sides of the gap
+  // (not necessarily on the same baseline), and each side's lines fill most
+  // of their column — table cells don't.
+  const rys = [...rightRows.keys()];
+  const paired = [...leftRows.keys()].filter((y) => rys.some((ry) => Math.abs(ry - y) <= 5)).length;
+  const widths = (map) => [...map.values()].map((e) => e[1] - e[0]);
+  const mlw = median(widths(leftRows));
+  const mrw = median(widths(rightRows));
+  const fullLeft = mlw >= (gx - minX) * 0.55;
+  const fullRight = mrw >= (maxX - gx) * 0.55;
   if (
-    left > total * 0.2 &&
-    right > total * 0.2 &&
+    left > total * 0.08 &&
+    right > total * 0.08 &&
     span < total * 0.35 &&
-    leftRows.size >= 6 &&
-    rightRows.size >= 6 &&
-    vOverlap > textH * 0.3
+    leftRows.size >= 4 &&
+    rightRows.size >= 4 &&
+    paired >= Math.min(3, rightRows.size - 1) &&
+    (fullLeft || fullRight) // one side may hold code, a figure or a short list
   ) {
     return gx;
   }
@@ -505,11 +519,44 @@ function buildLines(items, gutter, pageNum) {
         target.y = it.y;
       }
     }
-    lines.push(...open);
+    lines.push(...mergeScripts(open));
   }
 
   for (const ln of lines) finishLine(ln);
   return lines;
+}
+
+/** Superscripts/subscripts (smaller text slightly above/below a line) belong to that line. */
+function mergeScripts(lines) {
+  const bounds = (ln) => {
+    let x0 = Infinity;
+    let x1 = -Infinity;
+    for (const it of ln.items) {
+      x0 = Math.min(x0, it.x);
+      x1 = Math.max(x1, it.x + it.w);
+    }
+    return [x0, x1];
+  };
+  const out = [];
+  const sorted = [...lines].sort((a, b) => b.maxSize - a.maxSize);
+  const merged = new Set();
+  for (const small of [...lines].sort((a, b) => a.maxSize - b.maxSize)) {
+    if (merged.has(small)) continue;
+    const [sx0, sx1] = bounds(small);
+    const host = sorted.find((big) => {
+      if (big === small || merged.has(big) || small.maxSize >= big.maxSize * 0.85) return false;
+      const dy = small.y - big.y;
+      if (dy > big.maxSize * 0.75 || dy < -big.maxSize * 0.45) return false;
+      const [bx0, bx1] = bounds(big);
+      return sx0 >= bx0 - big.maxSize * 1.5 && sx1 <= bx1 + big.maxSize * 1.5;
+    });
+    if (host) {
+      host.items.push(...small.items);
+      merged.add(small);
+    }
+  }
+  for (const ln of lines) if (!merged.has(ln)) out.push(ln);
+  return out;
 }
 
 function finishLine(ln) {
@@ -546,10 +593,17 @@ function finishLine(ln) {
   };
   for (const it of items) {
     let piece = it.str;
+    // Raised, smaller text is a superscript: 10^9, s^-1, m^2
+    const isSup = it.size < size * 0.85 && it.y > ln.y + size * 0.2 && /^[\s\d+\-\u2212*†‡§,a-z]{1,8}$/i.test(piece.trim());
+    if (isSup) {
+      const continues = prev && prev.sup && it.x - (prev.x + prev.w) < size * 0.3;
+      piece = (continues ? "" : "^") + piece.trim().replace(/\u2212/g, "-");
+    }
+    it.sup = isSup;
     let sep = "";
     if (prev) {
       const gap = it.x - (prev.x + prev.w);
-      const needSpace = gap > 0.15 * size && !/\s$/.test(prev.str) && !/^\s/.test(piece);
+      const needSpace = gap > 0.15 * size && !/\s$/.test(prev.str) && !/^\s/.test(piece) && !piece.startsWith("^");
       if (needSpace) sep = " ";
       if (gap > Math.max(1.1 * size, 8)) {
         cells.push(cell);
@@ -639,6 +693,9 @@ function buildTable(run) {
   });
   const aligned = run.filter((l) => l.cells.length >= 2).length;
   if (aligned < run.length * 0.6) return null;
+  // Rows of long sentences are prose (e.g. undetected columns), not a table.
+  const lens = rows.flat().filter(Boolean).map((c) => c.length);
+  if (median(lens) > 35) return null;
   return rows;
 }
 
@@ -816,7 +873,7 @@ export async function convertPdf(data, options = {}, onProgress = () => {}) {
     // --- Raster images ---
     const pageFigures = [];
     const rasterBoxes = [];
-    for (const im of images) {
+    for (const im of opts.extractFigures ? images : []) {
       const b = im.bbox;
       if (rw(b) < opts.minFigureSize || rh(b) < opts.minFigureSize) continue;
       if (area(b) > W * H * 0.85 && lines.length > 5) continue; // scanned page behind an OCR text layer
@@ -837,7 +894,7 @@ export async function convertPdf(data, options = {}, onProgress = () => {}) {
     // --- Vector drawings ---
     const consumedLines = new Set();
     let vectorFigs = [];
-    if (opts.vectorFigures) {
+    if (opts.vectorFigures && opts.extractFigures) {
       vectorFigs = detectVectorFigures({ paths, lines, rotated, rasterBoxes, view, minSize: opts.minFigureSize });
     }
     let pageCanvas = null;

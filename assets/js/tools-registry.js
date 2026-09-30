@@ -27,6 +27,8 @@ window.TOOL_ICONS = {
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>',
   calculator:
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg>',
+  atom:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1.6"/><ellipse cx="12" cy="12" rx="10" ry="4.2"/><ellipse cx="12" cy="12" rx="10" ry="4.2" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4.2" transform="rotate(120 12 12)"/></svg>',
   sparkles:
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"/></svg>',
 };
@@ -41,6 +43,18 @@ window.TOOLS = [
     category: "Documents",
     tags: ["pdf", "docx", "word", "markdown", "md", "figures", "images", "png", "convert"],
     icon: "doc-to-md",
+    badge: "New",
+  },
+  {
+    id: "paper-to-lammps",
+    name: "MD Paper → LAMMPS Input",
+    description:
+      "Upload a molecular dynamics paper and get every simulation parameter in a table — each linked to its source sentence — plus a commented starter LAMMPS input script.",
+    href: "tools/paper-to-lammps/index.html",
+    category: "LAMMPS & MD Simulation",
+    tags: ["lammps", "molecular dynamics", "md", "parameters", "input script", "potential", "pdf"],
+    icon: "atom",
+    color: ["#0ea5e9", "#10b9a6"],
     badge: "New",
   },
 ];
