@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PDF / Word to Markdown — NSZ Toolkit</title>
+  <meta name="description" content="Convert PDF and Word (.docx) files to Markdown and extract every figure as PNG. Free, private and runs in your browser.">
+  <meta name="theme-color" content="#5b5bf6">
+  <link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+  <script>
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem("nsz-theme"); } catch (e) {}
+      if (!t) t = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.setAttribute("data-theme", t);
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <link rel="stylesheet" href="tool.css">
+</head>
+<body data-root="../../">
+  <header id="site-header" class="site-header"></header>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href="../../index.html">Home</a>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg>
+          <a href="../../index.html#tools">Tools</a>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg>
+          <span>PDF / Word → Markdown</span>
+        </nav>
+        <div class="tool-title">
+          <span class="tool-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M7.5 17v-4l2 2 2-2v4"/><path d="M15.5 13v4m0 0-1.5-1.5m1.5 1.5 1.5-1.5"/></svg>
+          </span>
+          <h1>PDF / Word <span class="gradient-text">→ Markdown</span></h1>
+        </div>
+        <p class="lead">
+          Upload a PDF or Word (.docx) file. You'll get a clean <strong>.md</strong> file plus every figure saved as
+          <code>fig1.png</code>, <code>fig2.png</code>… — all bundled in one ZIP.
+        </p>
+        <div class="hero-chips">
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> Files never leave your device</span>
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></svg> Headings, lists, tables &amp; figures</span>
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> One-click ZIP download</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="container workspace">
+      <!-- Steps -->
+      <ol class="stepper" aria-label="Progress">
+        <li class="step active" data-step="1"><span>1</span> Upload</li>
+        <li class="step" data-step="2"><span>2</span> Convert</li>
+        <li class="step" data-step="3"><span>3</span> Download</li>
+      </ol>
+
+      <!-- Upload -->
+      <div id="upload-view" class="panel">
+        <label id="dropzone" class="dropzone" for="file-input">
+          <input id="file-input" type="file" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden>
+          <div class="dz-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.9A7 7 0 1 1 15.7 8h1.8a4.5 4.5 0 0 1 2.5 8.2"/><path d="M12 12v9M8 16l4-4 4 4"/></svg>
+          </div>
+          <p class="dz-title">Drop your file here, or <span class="dz-link">browse</span></p>
+          <p class="dz-sub">PDF or Word (.docx) · up to ~100 MB</p>
+          <div class="dz-types">
+            <span class="ftype pdf">PDF</span>
+            <span class="ftype docx">DOCX</span>
+          </div>
+        </label>
+
+        <details class="options">
+          <summary>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
+            Options
+            <span class="opt-hint">(optional)</span>
+          </summary>
+          <div class="options-grid">
+            <label class="field">
+              <span>Figure file name prefix</span>
+              <input id="opt-prefix" type="text" value="fig" maxlength="24" spellcheck="false">
+              <small>Figures are saved as <code><b class="prefix-preview">fig</b>1.png</code>, <code><b class="prefix-preview">fig</b>2.png</code>…</small>
+            </label>
+            <label class="field">
+              <span>Ignore images smaller than</span>
+              <div class="input-suffix"><input id="opt-minsize" type="number" min="0" max="500" step="5" value="40"><em>pt</em></div>
+              <small>PDF only. Skips tiny icons and bullets. (72 pt = 1 inch)</small>
+            </label>
+            <div class="toggles">
+              <label class="toggle"><input id="opt-vector" type="checkbox" checked><span class="switch"></span>
+                <span><b>Capture drawn charts &amp; diagrams</b><small>PDF: also saves vector graphics that have a “Figure N” caption.</small></span></label>
+              <label class="toggle"><input id="opt-headers" type="checkbox" checked><span class="switch"></span>
+                <span><b>Remove page headers, footers &amp; numbers</b><small>PDF: drops text repeated at the top/bottom of pages.</small></span></label>
+              <label class="toggle"><input id="opt-tables" type="checkbox" checked><span class="switch"></span>
+                <span><b>Detect tables</b><small>PDF: turns aligned columns of text into Markdown tables.</small></span></label>
+              <label class="toggle"><input id="opt-markers" type="checkbox"><span class="switch"></span>
+                <span><b>Add page markers</b><small>PDF: inserts <code>&lt;!-- Page 3 --&gt;</code> comments.</small></span></label>
+              <label class="toggle"><input id="opt-snapshots" type="checkbox"><span class="switch"></span>
+                <span><b>Also save every page as an image</b><small>PDF: adds pages/page-1.png… to the ZIP.</small></span></label>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <!-- Progress -->
+      <div id="progress-view" class="panel" hidden>
+        <div class="file-row">
+          <span id="p-type" class="ftype pdf">PDF</span>
+          <div class="file-meta">
+            <strong id="p-name">file.pdf</strong>
+            <small id="p-size"></small>
+          </div>
+        </div>
+        <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div id="p-bar" class="progress-bar"></div>
+        </div>
+        <p id="p-status" class="p-status">Starting…</p>
+      </div>
+
+      <!-- Result -->
+      <div id="result-view" hidden>
+        <div class="result-head panel">
+          <div class="success-mark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          </div>
+          <div class="result-info">
+            <h2>Conversion complete</h2>
+            <p id="r-name" class="r-name"></p>
+            <div id="r-stats" class="r-stats"></div>
+          </div>
+          <div class="result-actions">
+            <button id="btn-zip" class="btn btn-primary btn-lg" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+              Download all (.zip)
+            </button>
+            <div class="action-row">
+              <button id="btn-md" class="btn btn-sm" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+                .md only
+              </button>
+              <button id="btn-copy" class="btn btn-sm" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Copy
+              </button>
+              <button id="btn-new" class="btn btn-sm" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+                New file
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="r-warnings"></div>
+
+        <div class="viewer panel">
+          <div class="tabs" role="tablist">
+            <button class="tab active" role="tab" aria-selected="true" data-tab="preview">Preview</button>
+            <button class="tab" role="tab" aria-selected="false" data-tab="markdown">Markdown</button>
+            <button class="tab" role="tab" aria-selected="false" data-tab="figures">Figures <span id="fig-count" class="count">0</span></button>
+            <button class="tab" role="tab" aria-selected="false" data-tab="files">ZIP contents</button>
+          </div>
+          <div class="tab-panels">
+            <div class="tab-panel active" data-panel="preview">
+              <article id="preview" class="markdown-body"></article>
+            </div>
+            <div class="tab-panel" data-panel="markdown">
+              <p class="hint">You can edit the Markdown here — your changes are included when you download.</p>
+              <textarea id="md-editor" spellcheck="false" aria-label="Markdown output"></textarea>
+            </div>
+            <div class="tab-panel" data-panel="figures">
+              <div id="figure-grid" class="figure-grid"></div>
+            </div>
+            <div class="tab-panel" data-panel="files">
+              <pre id="zip-tree" class="zip-tree"></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tips -->
+      <aside class="tips">
+        <h3>Tips for best results</h3>
+        <ul>
+          <li><b>Word files give the cleanest output</b> — headings, lists, tables and images are read exactly as written.</li>
+          <li><b>PDFs are rebuilt from their layout.</b> Headings, paragraphs, lists, simple tables and two-column papers are detected automatically. Always give the result a quick check.</li>
+          <li><b>Scanned PDFs</b> (photos of pages) have no real text, so only the page images can be saved.</li>
+          <li><b>Old <code>.doc</code> files</b> aren't supported — open them in Word and use <i>File → Save As → .docx</i>.</li>
+          <li>Charts drawn as vector graphics are saved when they have a “Figure N” caption. Turn on <i>“Also save every page as an image”</i> to catch anything else.</li>
+        </ul>
+      </aside>
+    </section>
+  </main>
+
+  <footer id="site-footer" class="site-footer"></footer>
+
+  <script src="../../assets/js/site.js"></script>
+  <script src="../../assets/vendor/mammoth.browser.min.js" defer></script>
+  <script src="../../assets/vendor/turndown.js" defer></script>
+  <script src="../../assets/vendor/turndown-plugin-gfm.js" defer></script>
+  <script src="../../assets/vendor/marked.umd.js" defer></script>
+  <script src="../../assets/vendor/purify.min.js" defer></script>
+  <script src="../../assets/vendor/jszip.min.js" defer></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

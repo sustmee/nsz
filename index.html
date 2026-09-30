@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NSZ Toolkit — Free tools for students</title>
+  <meta name="description" content="A growing collection of free, private, in-browser tools for students, built by Nafis Sadik Zim, Lecturer, SUST.">
+  <meta name="author" content="Nafis Sadik Zim">
+  <meta property="og:title" content="NSZ Toolkit — Free tools for students">
+  <meta property="og:description" content="Free, private, in-browser tools for students. Convert PDF/Word to Markdown, extract figures and more.">
+  <meta name="theme-color" content="#5b5bf6">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <script>
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem("nsz-theme"); } catch (e) {}
+      if (!t) t = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.setAttribute("data-theme", t);
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/home.css">
+</head>
+<body data-root="./">
+  <header id="site-header" class="site-header"></header>
+
+  <main>
+    <!-- ================= HERO ================= -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <span class="chip"><span class="dot"></span> 100% free · No sign-up · Private</span>
+          <h1>Smart tools for <span class="gradient-text">smarter students</span>.</h1>
+          <p class="lead">
+            A growing collection of handy utilities to save you time on assignments, lab reports and research —
+            built by <strong>Nafis Sadik Zim</strong>, Lecturer, SUST.
+          </p>
+          <div class="hero-cta">
+            <a class="btn btn-primary btn-lg" href="#tools">
+              Explore tools
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+            <a class="btn btn-lg" href="#why">Why it's safe</a>
+          </div>
+          <dl class="hero-stats">
+            <div><dt id="stat-tools">1</dt><dd>tool ready</dd></div>
+            <div><dt>0</dt><dd>files uploaded</dd></div>
+            <div><dt>৳0</dt><dd>forever free</dd></div>
+          </dl>
+        </div>
+
+        <!-- Decorative illustration: a document turning into Markdown + figures -->
+        <div class="hero-art" aria-hidden="true">
+          <div class="art-card art-pdf">
+            <div class="art-head"><span class="art-file pdf">PDF</span> report.pdf</div>
+            <div class="art-lines">
+              <i style="width:70%"></i><i></i><i style="width:88%"></i>
+              <div class="art-fig"><svg viewBox="0 0 60 36"><polyline points="2,32 14,20 24,26 38,10 58,16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <i style="width:92%"></i><i style="width:60%"></i>
+            </div>
+          </div>
+          <div class="art-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </div>
+          <div class="art-card art-md">
+            <div class="art-head"><span class="art-file md">MD</span> report.md</div>
+            <pre><span class="c1"># Results</span>
+The model improves
+accuracy by <span class="c2">**12%**</span>.
+
+<span class="c3">![Figure 1](figures/fig1.png)</span></pre>
+          </div>
+          <div class="art-figs">
+            <span><b></b>fig1.png</span>
+            <span><b></b>fig2.png</span>
+            <span><b></b>fig3.png</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TOOLS ================= -->
+    <section id="tools" class="section">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Toolbox</span>
+            <h2>All tools</h2>
+            <p class="section-sub">Pick a tool to get started. New tools are added regularly.</p>
+          </div>
+          <label class="search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <span class="visually-hidden">Search tools</span>
+            <input id="tool-search" type="search" placeholder="Search tools…  (press / )" autocomplete="off">
+          </label>
+        </div>
+
+        <div id="tool-filters" class="filters" role="tablist" aria-label="Filter tools by category"></div>
+        <div id="tool-grid" class="tool-grid"></div>
+        <p id="tool-empty" class="empty" hidden>No tools match your search. Try another keyword.</p>
+      </div>
+    </section>
+
+    <!-- ================= WHY ================= -->
+    <section id="why" class="section">
+      <div class="container">
+        <div class="section-head center">
+          <div>
+            <span class="eyebrow">Why NSZ Toolkit</span>
+            <h2>Built for students, designed for privacy</h2>
+          </div>
+        </div>
+        <div class="features">
+          <article class="feature reveal">
+            <div class="f-icon f1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
+            <h3>Private by design</h3>
+            <p>Your files are processed right inside your browser. Nothing is uploaded to any server — ever.</p>
+          </article>
+          <article class="feature reveal">
+            <div class="f-icon f2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></svg></div>
+            <h3>Fast &amp; simple</h3>
+            <p>No accounts, no ads, no waiting in queues. Drop a file, get your result in seconds.</p>
+          </article>
+          <article class="feature reveal">
+            <div class="f-icon f3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg></div>
+            <h3>Free forever</h3>
+            <p>Made by a teacher for students. Every tool here is and will stay completely free.</p>
+          </article>
+          <article class="feature reveal">
+            <div class="f-icon f4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg></div>
+            <h3>Works everywhere</h3>
+            <p>Laptop, lab PC or phone — any modern browser works. Light and dark themes included.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= ABOUT ================= -->
+    <section id="about" class="section">
+      <div class="container">
+        <div class="about card reveal">
+          <div class="avatar" aria-hidden="true"><span>NSZ</span></div>
+          <div class="about-copy">
+            <span class="eyebrow">About</span>
+            <h2>Hi, I'm Nafis Sadik Zim</h2>
+            <p class="role">Lecturer, Shahjalal University of Science and Technology (SUST)</p>
+            <p>
+              I built this toolkit for my students. Many small tasks — converting papers into notes, pulling figures
+              out of reports, cleaning up documents — eat up time that is better spent learning.
+              These tools take care of the boring parts so you can focus on what matters.
+            </p>
+            <p class="muted">Have an idea for a tool that would help you? Tell me in class — the best suggestions get built next.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer" class="site-footer"></footer>
+
+  <script src="assets/js/site.js"></script>
+  <script src="assets/js/tools-registry.js"></script>
+  <script src="assets/js/home.js"></script>
+</body>
+</html>

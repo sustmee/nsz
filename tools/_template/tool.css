@@ -1,0 +1,4 @@
+/* Styles for your new tool. Shared styles (buttons, cards, colours) come from assets/css/style.css. */
+
+.workspace { padding-top: 26px; display: grid; gap: 20px; }
+.panel { padding: 24px; }
