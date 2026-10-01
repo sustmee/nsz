@@ -77,7 +77,10 @@ to pay for or maintain. The whole site is static HTML/CSS/JS with **no build ste
 - **Comparison:** both on one chart (crosshair tooltip, legend + direct labels, light/dark), the difference curve,
   your curve drawn onto the original figure, and a table. Metrics: RMSE (also as % of the published range), R²,
   mean relative error, peak value and its x, and last x (e.g. fracture strain), with an agreement verdict.
-  Downloads: chart PNG/SVG, all data CSV, digitized published data CSV.
+  Downloads: chart PNG/SVG, all data CSV.
+- **Just the numbers:** step *3 · Download data* inside the digitizer exports the extracted curves on their own —
+  no comparison needed — as **Excel (.xlsx)** (one sheet per curve, an “All curves” sheet and an “Info” sheet with
+  the calibration), **text (.txt)** (tab-separated, one block per curve, `#` header lines) or **CSV**.
 
 ## Project structure
 

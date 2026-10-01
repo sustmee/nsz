@@ -6,6 +6,7 @@
    ========================================================================== */
 
 import { detectAxes, innerBox, findSeriesColors, extractSeries, makeCalibration, defaultMarkers } from "./digitizer-core.js";
+import { toXlsx, toTxt, toCsv } from "./export.js";
 
 const MAX_SIDE = 1800;
 const MARKER_COLORS = { x: "#c026d3", y: "#0891b2" };
@@ -178,7 +179,21 @@ export class Digitizer {
       this.seriesList,
     );
 
-    this.side = h("div", { class: "pd-side" }, calPanel, curvesPanel);
+    // 3) download the digitized numbers on their own (no comparison needed)
+    this.exportInfo = h("p", { class: "pd-help" });
+    const exBtn = (label, cls, fmt) => {
+      const b = h("button", { type: "button", class: `btn btn-sm pd-ex ${cls}`, disabled: true }, label);
+      b.addEventListener("click", () => this.download(fmt));
+      return b;
+    };
+    this.exportBtns = [exBtn("Excel (.xlsx)", "pd-ex-main", "xlsx"), exBtn("Text (.txt)", "", "txt"), exBtn("CSV", "", "csv")];
+    const exportPanel = h("section", { class: "pd-panel" },
+      h("h4", {}, h("span", { class: "pd-num", text: "3" }), "Download data"),
+      this.exportInfo,
+      h("div", { class: "pd-ex-row" }, ...this.exportBtns),
+    );
+
+    this.side = h("div", { class: "pd-side" }, calPanel, curvesPanel, exportPanel);
     this.work = h("div", { class: "pd-work", hidden: true },
       h("div", { class: "pd-main" }, this.toolbar, this.modeHint, this.stage),
       this.side,
@@ -302,7 +317,11 @@ export class Digitizer {
     }
     if (this.colors.length > 1) {
       const all = h("button", { type: "button", class: "pd-swatch pd-swatch-all", text: "Extract all" });
-      all.addEventListener("click", () => this.colors.forEach((c) => this.addSeries(c, true)));
+      // Small black/grey groups next to coloured curves are usually text and legends, not data.
+      all.addEventListener("click", () => {
+        const coloured = this.colors.some((c) => c.kind !== "dark" && c.coverage > 0.3);
+        this.colors.filter((c) => !(coloured && c.kind === "dark" && c.coverage < 0.25)).forEach((c) => this.addSeries(c, true));
+      });
       this.swatches.append(all);
     }
   }
@@ -438,7 +457,46 @@ export class Digitizer {
         this.calStatus.className = "pd-status ok";
       }
     }
+    this.updateExport();
     this.opts.onChange?.(this);
+  }
+
+  updateExport() {
+    if (!this.exportBtns) return;
+    const d = this.img ? this.getData() : null;
+    const ready = d && d.ok && d.series.length > 0;
+    this.exportBtns.forEach((b) => (b.disabled = !ready));
+    if (!this.img) this.exportInfo.textContent = "";
+    else if (!d.ok) this.exportInfo.textContent = "Type the four axis values (step 1) to unlock the download.";
+    else if (!d.series.length) this.exportInfo.textContent = "Extract a curve (step 2) to download its data.";
+    else {
+      const n = d.series.reduce((s, c) => s + c.points.length, 0);
+      this.exportInfo.textContent = `Just need the numbers? ${d.series.length} curve${d.series.length > 1 ? "s" : ""}, ${n} points — download them now, no comparison needed.`;
+    }
+  }
+
+  exportMeta(d) {
+    const cal = [["X1", this.markers.x1], ["X2", this.markers.x2], ["Y1", this.markers.y1], ["Y2", this.markers.y2]].map(([k, m]) => [
+      `${k} marker`,
+      `${this.calInputs[k.toLowerCase()].value.trim()} (at pixel ${Math.round(k[0] === "X" ? m.x : m.y)})`,
+    ]);
+    cal.push(["Log x-axis", this.logX.checked ? "yes" : "no"], ["Log y-axis", this.logY.checked ? "yes" : "no"]);
+    return { source: this.fileName || "", xLabel: d.xLabel || "x", yLabel: d.yLabel || "y", calibration: cal };
+  }
+
+  async download(fmt) {
+    const d = this.getData();
+    if (!d.ok || !d.series.length) return;
+    const meta = this.exportMeta(d);
+    const base = (this.fileName || "figure").replace(/\.[^.]+$/, "").replace(/[\\/:*?"<>|\s]+/g, "_").slice(0, 50) + "_digitized";
+    const save = window.NSZ.downloadBlob;
+    try {
+      if (fmt === "xlsx") save(await toXlsx(d.series, meta), base + ".xlsx");
+      else if (fmt === "txt") save(new Blob([toTxt(d.series, meta)], { type: "text/plain" }), base + ".txt");
+      else save(new Blob([toCsv(d.series, meta)], { type: "text/csv" }), base + ".csv");
+    } catch (e) {
+      this.opts.toast?.(e.message || "Download failed.", "error");
+    }
   }
 
   /** Crops of the image around each marker, where its tick label usually is. */

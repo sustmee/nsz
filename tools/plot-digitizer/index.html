@@ -60,7 +60,7 @@
           <span class="pd-step">1</span>
           <div>
             <h2>Published figure</h2>
-            <p class="pd-help">Upload a screenshot of the graph from the paper. Crop to one panel if the figure has several.</p>
+            <p class="pd-help">Upload a screenshot of the graph from the paper. Crop to one panel if the figure has several. Only need the numbers? Download them as Excel or text right here — steps 2 and 3 are optional.</p>
           </div>
           <button id="btn-sample" class="btn btn-sm" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -168,7 +168,7 @@
             </button>
             <button id="dl-svg" class="btn" type="button">Chart (SVG)</button>
             <button id="dl-csv" class="btn" type="button">All data (CSV)</button>
-            <button id="dl-pub" class="btn" type="button">Digitized published data (CSV)</button>
+            <button id="dl-pub-xlsx" class="btn" type="button">Published data (Excel)</button>
           </div>
         </div>
       </div>
@@ -190,6 +190,7 @@
   <footer id="site-footer" class="site-footer"></footer>
 
   <script src="../../assets/js/site.js"></script>
+  <script src="../../assets/vendor/jszip.min.js" defer></script>
   <script type="module" src="app.js"></script>
 </body>
 </html>

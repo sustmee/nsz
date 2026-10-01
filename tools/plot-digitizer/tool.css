@@ -169,6 +169,8 @@
 .pd-settings select { grid-column: span 2; }
 .pd-settings input[type="range"] { width: 100%; accent-color: #eb6834; }
 .pd-series { display: grid; gap: 6px; }
+.pd-ex-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.pd-ex-main:not([disabled]) { color: #fff !important; border-color: transparent; background: linear-gradient(135deg, #16a34a, #10b9a6); }
 .pd-srow {
   display: grid;
   grid-template-columns: auto 1fr auto auto;

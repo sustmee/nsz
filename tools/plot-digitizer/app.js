@@ -421,10 +421,9 @@ $("#dl-csv").addEventListener("click", () => {
   }
   downloadBlob(new Blob([csv], { type: "text/csv" }), "comparison_data.csv");
 });
-$("#dl-pub").addEventListener("click", () => {
-  const st = charts.state;
-  if (!st || !st.pubSeries.length) return toast("Extract a published curve first.", "error");
-  downloadBlob(new Blob([seriesCsv(st.pubSeries, st.xLabel)], { type: "text/csv" }), "digitized_published.csv");
+$("#dl-pub-xlsx").addEventListener("click", () => {
+  if (!pub.series.length) return toast("Extract a published curve first.", "error");
+  pub.download("xlsx");
 });
 
 new MutationObserver(() => charts.state && update()).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
