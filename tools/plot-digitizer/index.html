@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Plot Digitizer &amp; Compare — NSZ Toolkit</title>
+  <meta name="description" content="Extract data points from a published figure, then compare them with your own results on one chart — with error metrics. Free and private: runs in your browser.">
+  <meta name="theme-color" content="#eb6834">
+  <link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+  <script>
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem("nsz-theme"); } catch (e) {}
+      if (!t) t = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.setAttribute("data-theme", t);
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <link rel="stylesheet" href="../doc-to-markdown/tool.css">
+  <link rel="stylesheet" href="tool.css">
+</head>
+<body data-root="../../">
+  <header id="site-header" class="site-header"></header>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href="../../index.html">Home</a>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg>
+          <a href="../../index.html#tools">Research &amp; Data</a>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg>
+          <span>Plot Digitizer &amp; Compare</span>
+        </nav>
+        <div class="tool-title">
+          <span class="tool-icon pd-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 15 4-5 3 3 5-6"/><circle cx="7" cy="15" r="1.2"/><circle cx="11" cy="10" r="1.2"/><circle cx="14" cy="13" r="1.2"/><circle cx="19" cy="7" r="1.2"/></svg>
+          </span>
+          <h1>Plot Digitizer <span class="gradient-text pd-grad">&amp; Compare</span></h1>
+        </div>
+        <p class="lead">
+          Pull the data points out of a published figure, add your own results (a data file or another figure),
+          and see both on one chart — with the error between them, peak differences and an overlay on the original figure.
+        </p>
+        <div class="hero-chips">
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 3v4M3 7h4"/></svg> Axes &amp; ticks found automatically</span>
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/></svg> Curves picked by colour</span>
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> Nothing is uploaded</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="container workspace" data-tool>
+      <!-- 1. Published figure -->
+      <div class="panel pd-section" id="sec-pub">
+        <div class="pd-section-head">
+          <span class="pd-step">1</span>
+          <div>
+            <h2>Published figure</h2>
+            <p class="pd-help">Upload a screenshot of the graph from the paper. Crop to one panel if the figure has several.</p>
+          </div>
+          <button id="btn-sample" class="btn btn-sm" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            Try a sample
+          </button>
+        </div>
+        <div id="dig-pub"></div>
+      </div>
+
+      <!-- 2. Your results -->
+      <div class="panel pd-section" id="sec-mine">
+        <div class="pd-section-head">
+          <span class="pd-step">2</span>
+          <div>
+            <h2>Your results</h2>
+            <p class="pd-help">A data file from your simulation or experiment (two or more columns), pasted numbers, or a figure image.</p>
+          </div>
+        </div>
+        <div class="input-tabs" role="tablist">
+          <button class="input-tab active" type="button" role="tab" aria-selected="true" data-mine="file">Data file</button>
+          <button class="input-tab" type="button" role="tab" aria-selected="false" data-mine="paste">Paste numbers</button>
+          <button class="input-tab" type="button" role="tab" aria-selected="false" data-mine="image">Figure image</button>
+        </div>
+
+        <div data-mine-panel="file">
+          <label class="dropzone dz-compact" id="data-drop">
+            <input id="data-input" class="dz-input" type="file" accept=".txt,.dat,.csv,.tsv,.out,.log,.xy,text/plain,text/csv" aria-label="Choose a data file">
+            <div class="dz-icon pd-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg></div>
+            <p class="dz-title">Drop your data file here, or tap to choose</p>
+            <p class="dz-sub">.txt, .dat, .csv — columns separated by spaces, tabs or commas. Lines starting with # are ignored.</p>
+          </label>
+        </div>
+        <div data-mine-panel="paste" hidden>
+          <textarea id="paste-data" class="pd-paste" rows="8" spellcheck="false" placeholder="0      0&#10;0.01   10.4&#10;0.02   20.9&#10;…"></textarea>
+          <button id="btn-paste" class="btn btn-sm" type="button">Use these numbers</button>
+        </div>
+        <div data-mine-panel="image" hidden>
+          <div id="dig-mine"></div>
+        </div>
+
+        <div id="table-setup" class="pd-table-setup" hidden>
+          <div class="pd-table-head">
+            <strong id="table-name">data.txt</strong>
+            <small id="table-info"></small>
+          </div>
+          <div class="pd-colpick">
+            <label class="field"><span>X column</span><select id="col-x"></select></label>
+            <div class="field"><span>Y column(s)</span><div id="col-y" class="pd-ycols"></div></div>
+            <label class="field"><span>Multiply X by</span><input id="scale-x" type="text" inputmode="decimal" value="1"></label>
+            <label class="field"><span>Multiply Y by</span><input id="scale-y" type="text" inputmode="decimal" value="1"></label>
+            <label class="field"><span>Name in chart</span><input id="mine-name" type="text" value="My results"></label>
+          </div>
+          <p class="pd-help">Units differ from the paper? Use the multipliers, e.g. strain → % strain: X × 100; MPa → GPa: Y × 0.001.</p>
+          <div id="unit-hint"></div>
+        </div>
+      </div>
+
+      <!-- 3. Comparison -->
+      <div class="panel pd-section" id="sec-compare">
+        <div class="pd-section-head">
+          <span class="pd-step">3</span>
+          <div>
+            <h2>Comparison</h2>
+            <p class="pd-help" id="compare-help">Add the published curve (step 1) and your results (step 2) to see them together.</p>
+          </div>
+        </div>
+        <div id="compare-body" hidden>
+          <div id="verdict"></div>
+          <div class="pd-pair" id="pair-pick" hidden>
+            <label class="field"><span>Published curve</span><select id="pair-ref"></select></label>
+            <label class="field"><span>Your curve</span><select id="pair-mine"></select></label>
+          </div>
+          <div id="metrics" class="pd-metrics"></div>
+
+          <div class="viewer pd-viewer">
+            <div class="tabs" role="tablist">
+              <button class="tab active" role="tab" aria-selected="true" data-tab="chart">Chart</button>
+              <button class="tab" role="tab" aria-selected="false" data-tab="diff">Difference</button>
+              <button class="tab" role="tab" aria-selected="false" data-tab="overlay">Overlay on figure</button>
+              <button class="tab" role="tab" aria-selected="false" data-tab="table">Table</button>
+            </div>
+            <div class="tab-panels">
+              <div class="tab-panel active viz-root" data-panel="chart">
+                <div id="legend" class="viz-legend"></div>
+                <div id="chart" class="viz-chart"></div>
+              </div>
+              <div class="tab-panel viz-root" data-panel="diff">
+                <p class="pd-help">Your curve minus the published one, over the x-range both cover. Above zero = yours is higher.</p>
+                <div id="diff-chart" class="viz-chart"></div>
+              </div>
+              <div class="tab-panel" data-panel="overlay">
+                <p class="pd-help">Your results drawn straight onto the published figure, using its calibration.</p>
+                <div id="overlay" class="pd-overlay-view"></div>
+              </div>
+              <div class="tab-panel" data-panel="table">
+                <div id="data-table" class="pd-table-wrap"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pd-downloads">
+            <button id="dl-png" class="btn btn-primary pd-btn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+              Chart (PNG)
+            </button>
+            <button id="dl-svg" class="btn" type="button">Chart (SVG)</button>
+            <button id="dl-csv" class="btn" type="button">All data (CSV)</button>
+            <button id="dl-pub" class="btn" type="button">Digitized published data (CSV)</button>
+          </div>
+        </div>
+      </div>
+
+      <aside class="tips">
+        <h3>Tips for accurate results</h3>
+        <ul>
+          <li><b>Use the sharpest image you can</b> — zoom the PDF to 200–400% before taking the screenshot.</li>
+          <li><b>Place markers on labelled ticks</b> far apart (first and last tick). The small previews show the number at each marker.</li>
+          <li><b>Legend or text in the way?</b> Use <i>Erase area</i> and drag a box over it.</li>
+          <li><b>Several curves in the same colour</b> (e.g. all black)? Use <i>Click a curve</i> and tap the one you want.</li>
+          <li><b>Log-scale axis?</b> Tick “Log x-axis” / “Log y-axis” and type the real values (e.g. 0.01 and 100).</li>
+          <li>A LAMMPS <code>stress_strain.txt</code> made by our <a href="../paper-to-lammps/index.html">MD Paper → LAMMPS</a> tool can be dropped straight into step 2.</li>
+        </ul>
+      </aside>
+    </section>
+  </main>
+
+  <footer id="site-footer" class="site-footer"></footer>
+
+  <script src="../../assets/js/site.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

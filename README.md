@@ -10,6 +10,7 @@ to pay for or maintain. The whole site is static HTML/CSS/JS with **no build ste
 | Tool | What it does |
 | --- | --- |
 | [PDF / Word → Markdown](tools/doc-to-markdown/) | Converts a PDF or `.docx` file into a `.md` file and saves every figure as `fig1.png`, `fig2.png`, … Downloads everything as one ZIP. |
+| [Plot Digitizer & Compare](tools/plot-digitizer/) | Extracts data points from a published figure (axes, ticks and curve colours detected automatically) and compares them with your own results — a data file or another figure — on one chart, with error metrics. |
 | [MD Paper → LAMMPS Input](tools/paper-to-lammps/) | Reads a molecular dynamics paper, lists its simulation parameters (each linked to its source sentence) and writes a commented starter LAMMPS input script. |
 
 ### PDF / Word → Markdown: what it handles
@@ -59,6 +60,25 @@ to pay for or maintain. The whole site is static HTML/CSS/JS with **no build ste
 - Limits: it reads text with rules, so it can pick the wrong number — always check the sources. Values only shown in
   tables of images, or in equations, may be missed.
 
+### Plot Digitizer & Compare: what it handles
+
+- **Published figure** (PNG/JPG, or paste a screenshot with Ctrl+V): finds the x and y axes (also when a curve
+  paints over an axis) and the tick marks — including ticks hidden in the origin corner or a frame line — and
+  places the four calibration markers (X1, X2, Y1, Y2) on the outermost ticks. A zoomed preview of each marker's
+  tick label is shown next to its input, so you only type the numbers. Log axes are supported.
+- **Curves:** colours inside the plot are grouped automatically (blue, red, black/grey, …); one tap extracts a
+  curve. Tools: *Click a curve* (picks the exact curve — useful when several share a colour), *Add / delete points*,
+  *Erase area* (legends, labels), *Crop panel* (multi-panel figures), line or scatter-marker mode, number of points,
+  colour tolerance. Vertical drops (e.g. fracture) keep both ends. Legend samples are ignored automatically.
+  On test figures made with matplotlib the extracted points were within ~0.2 % (median) of the true curve.
+- **Your results:** a data file (`.txt`, `.dat`, `.csv`; comment lines and LAMMPS-style `# x y` headers understood;
+  decimal commas too), pasted numbers, or a second figure digitized the same way. Pick the x/y columns, scale units
+  (a hint appears when your values are ~1000× off, with a one-click fix).
+- **Comparison:** both on one chart (crosshair tooltip, legend + direct labels, light/dark), the difference curve,
+  your curve drawn onto the original figure, and a table. Metrics: RMSE (also as % of the published range), R²,
+  mean relative error, peak value and its x, and last x (e.g. fracture strain), with an agreement verdict.
+  Downloads: chart PNG/SVG, all data CSV, digitized published data CSV.
+
 ## Project structure
 
 ```
@@ -76,6 +96,11 @@ tools/
   _template/                Copy this to start a new tool
   doc-to-markdown/          PDF / Word → Markdown tool
     index.html  tool.css  app.js  pdf-to-md.js  docx-to-md.js
+  plot-digitizer/           Plot Digitizer & Compare tool
+    digitizer-core.js       axis/tick/colour detection and curve extraction (no DOM; runs in Node too)
+    digitizer-ui.js         the interactive digitizer (used for the published figure and for yours)
+    compare.js              data-file parsing, interpolation, error metrics
+    chart.js                SVG comparison chart with crosshair tooltip and PNG/SVG export
   paper-to-lammps/          MD Paper → LAMMPS Input tool (reuses the PDF reader above)
     index.html  tool.css  app.js
     data.js                 materials, potentials, masses, keywords

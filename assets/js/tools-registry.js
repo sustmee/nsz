@@ -29,6 +29,8 @@ window.TOOL_ICONS = {
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg>',
   atom:
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1.6"/><ellipse cx="12" cy="12" rx="10" ry="4.2"/><ellipse cx="12" cy="12" rx="10" ry="4.2" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4.2" transform="rotate(120 12 12)"/></svg>',
+  chart:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 15 4-5 3 3 5-6"/><circle cx="7" cy="15" r="1.2"/><circle cx="11" cy="10" r="1.2"/><circle cx="14" cy="13" r="1.2"/><circle cx="19" cy="7" r="1.2"/></svg>',
   sparkles:
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"/></svg>',
 };
@@ -55,6 +57,18 @@ window.TOOLS = [
     tags: ["lammps", "molecular dynamics", "md", "parameters", "input script", "potential", "pdf"],
     icon: "atom",
     color: ["#0ea5e9", "#10b9a6"],
+    badge: "New",
+  },
+  {
+    id: "plot-digitizer",
+    name: "Plot Digitizer & Compare",
+    description:
+      "Extract data points from a published figure (axes detected automatically), then compare them with your own results — a data file or another figure — on one chart with error metrics.",
+    href: "tools/plot-digitizer/index.html",
+    category: "Research & Data",
+    tags: ["digitize", "graph", "figure", "extract data", "compare", "validation", "plot"],
+    icon: "chart",
+    color: ["#f59e0b", "#e11d74"],
     badge: "New",
   },
 ];
