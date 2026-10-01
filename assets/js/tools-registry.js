@@ -31,8 +31,6 @@ window.TOOL_ICONS = {
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1.6"/><ellipse cx="12" cy="12" rx="10" ry="4.2"/><ellipse cx="12" cy="12" rx="10" ry="4.2" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4.2" transform="rotate(120 12 12)"/></svg>',
   chart:
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 15 4-5 3 3 5-6"/><circle cx="7" cy="15" r="1.2"/><circle cx="11" cy="10" r="1.2"/><circle cx="14" cy="13" r="1.2"/><circle cx="19" cy="7" r="1.2"/></svg>',
-  notes:
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h11a3 3 0 0 1 3 3v2"/><path d="M4 4v16h8"/><path d="M7.5 9h6M7.5 12.5h3"/><path d="m19.5 12.5-6 6L12 21l2.5-1.5 6-6a1.06 1.06 0 0 0-1-2Z"/></svg>',
   sparkles:
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"/></svg>',
 };
@@ -47,18 +45,6 @@ window.TOOLS = [
     category: "Documents",
     tags: ["pdf", "docx", "word", "markdown", "md", "figures", "images", "png", "convert"],
     icon: "doc-to-md",
-    badge: "New",
-  },
-  {
-    id: "handwritten-notes",
-    name: "Handwritten Notes → Text",
-    description:
-      "Upload photos or a scanned PDF of class notes and get clean, editable text with properly rendered maths. Download as Word (editable equations), PDF, LaTeX or Markdown.",
-    href: "tools/handwritten-notes/index.html",
-    category: "Documents",
-    tags: ["handwriting", "notes", "ocr", "photo", "scan", "math", "latex", "word", "docx", "pdf", "equations"],
-    icon: "notes",
-    color: ["#06b6d4", "#7c3aed"],
     badge: "New",
   },
   {
