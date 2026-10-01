@@ -78,7 +78,7 @@
           Made with <span class="heart">♥</span> by <strong>${SITE.owner}</strong>, ${SITE.ownerTitle}.
         </div>
         <div>
-          Your files are processed in your browser and never uploaded.<br>
+          Your files are processed in your browser — a tool tells you clearly if anything is sent elsewhere.<br>
           © ${year} ${SITE.owner}. <a href="${root}index.html#tools">All tools →</a>
         </div>
       </div>`;

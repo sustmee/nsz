@@ -2,16 +2,46 @@
 
 Free, private, in-browser tools for students, built by **Nafis Sadik Zim**, Lecturer, SUST.
 
-Everything runs in the visitor's browser. Files are never uploaded, so there is no server
-to pay for or maintain. The whole site is static HTML/CSS/JS with **no build step**.
+Everything runs in the visitor's browser. Files are never uploaded to this site, so there is no server
+to pay for or maintain. (The one exception is optional: the handwritten-notes tool can send page photos to the
+Claude API with the student's own key.) The whole site is static HTML/CSS/JS with **no build step**.
 
 ## Tools
 
 | Tool | What it does |
 | --- | --- |
+| [Handwritten Notes → Text](tools/handwritten-notes/) | Turns photos or a scanned PDF of class notes into clean, editable Markdown with LaTeX maths (read by Claude), with a live editor and preview. Downloads a formatted Word file (editable equations), PDF, LaTeX project for Overleaf, Markdown, or a cleaned "scan" PDF of the pages. |
 | [PDF / Word → Markdown](tools/doc-to-markdown/) | Converts a PDF or `.docx` file into a `.md` file and saves every figure as `fig1.png`, `fig2.png`, … Downloads everything as one ZIP. |
 | [Plot Digitizer & Compare](tools/plot-digitizer/) | Extracts data points from a published figure (axes, ticks and curve colours detected automatically) and compares them with your own results — a data file or another figure — on one chart, with error metrics. |
 | [MD Paper → LAMMPS Input](tools/paper-to-lammps/) | Reads a molecular dynamics paper, lists its simulation parameters (each linked to its source sentence) and writes a commented starter LAMMPS input script. |
+
+### Handwritten Notes → Text: what it handles
+
+- **Input:** any number of photos (JPG, PNG, HEIC on iPhone), a camera shot, pasted screenshots, or a scanned PDF.
+  Pages can be reordered, rotated, cropped and removed.
+- **Clean-up (in the browser):** flattens uneven lighting and shadows, whitens the paper, darkens the ink and keeps
+  coloured pens coloured. Modes: *Clean colour*, *Black & white* (faint pencil) or *Original*. All cleaned pages can
+  be saved as one PDF — a phone "scanner".
+- **Reading:** Claude (`claude-opus-5-5`) reads each page and returns Markdown + LaTeX: headings, lists, tables,
+  definition/example boxes, display and aligned equations, `\boxed{}` answers, and diagrams as cut-outs of the
+  photo (`![Figure: …](page:2#x0,y0,x1,y1)`). Words it isn't sure about are wrapped as `[?word?]` and highlighted.
+  Options: *Exact* or *Clean study notes*, *Flag possible mistakes* (adds a "Check" box, never changes the text),
+  *Careful mode* (higher effort). Bangla, English and mixed notes keep their language.
+  - **Automatic:** the browser calls the Claude API directly with the student's own API key (stored only in that
+    browser; one streamed request per page, with the previous page's ending for continuity). Usage is billed to the key.
+  - **Free:** download the cleaned pages, copy the ready-made instructions into any AI chat, paste the reply back.
+- **Editor:** Markdown on the left, live KaTeX preview on the right (Edit / Preview tabs on phones). Click the
+  preview to jump to the source line; *Next to check* walks through uncertain words (Enter keeps the guess);
+  *Photos beside text* shows each page photo next to its text; click a figure to re-crop it; formatting toolbar.
+  The text is saved in the browser as you type.
+- **Downloads:**
+  - **Word (.docx):** title block, styled headings, numbered/bulleted lists, tables, coloured definition/example/note
+    boxes, figures with numbered captions, page numbers — and every equation as a native, editable Word equation
+    (LaTeX → MathML via KaTeX → OMML). Also opens in LibreOffice (tested with LibreOffice 24.2).
+  - **PDF:** a print-ready page (A4/Letter, page numbers) through the browser's *Save as PDF*.
+  - **LaTeX for Overleaf (.zip):** `main.tex` + `figures/`. pdfLaTeX; Bangla documents switch to LuaLaTeX automatically.
+  - **Markdown** (with a `figures/` folder when there are diagrams).
+- Limits: handwriting recognition can still misread messy writing — always check the highlighted words.
 
 ### PDF / Word → Markdown: what it handles
 
